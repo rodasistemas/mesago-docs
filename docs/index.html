@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Mesago - API SMS</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/assets/docs/style.css">
+        <link rel="shortcut icon" href="/media/app-images/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="/media/app-images/favicon.ico" type="image/x-icon">
+
+        <script type="text/javascript" src="/assets/global/plugins/jquery.min.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/assets/global/plugins/jquery.validate.min.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/assets/global/plugins/jquery.form.js" charset="utf-8"></script>
+        <script type="text/javascript" src="/assets/global/plugins/bootstrap/js/bootstrap.js" charset="utf-8"></script>
+    </head>
+    <body class="preload">
+        <body class="preload">
+    <div id="nav-background"></div>
+    <div class="container-fluid triple">
+        <div class="row"><nav><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#top">Overview</a></div><div class="collapse-content"><ul><li><a href="#header-autenticação">Autenticação</a></li><li><a href="#header-parâmetro-id">Parâmetro Id</a></li><li><a href="#header-tabela-de-status">Tabela de Status</a></li><li><a href="#header-statuscode">statusCode</a></li><li><a href="#header-detailcode">detailCode</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#serviços-da-api">Serviços da API</a></div><div class="collapse-content"><ul><li><a href="#serviços-da-api-envio-de-um-único-sms-post"><span class="badge post"><i class="fa fa-plus"></i></span> Envio de um único SMS</a></li><li><a href="#serviços-da-api-envio-de-vários-smss-simultaneamente-post"><span class="badge post"><i class="fa fa-plus"></i></span> Envio de vários SMSs simultaneamente</a></li><li><a href="#serviços-da-api-consulta-status-de-um-sms-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span> Consulta de Status de um SMS</a></li><li><a href="#serviços-da-api-listar-novos-sms-recebidos-post"><span class="badge post"><i class="fa fa-plus"></i></span> Listar Novos SMS recebidos</a></li><li><a href="#serviços-da-api-consultar-sms-recebidos-por-período-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span> Consultar SMS recebidos por Período</a></li><li><a href="#serviços-da-api-cancelamento-de-sms-agendado-post"><span class="badge post"><i class="fa fa-plus"></i></span> Cancelamento de SMS agendado</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#callbacks-da-api">Callbacks da API</a></div><div class="collapse-content"><ul><li><a href="#header-callback-de-status-de-entrega">Callback de Status de Entrega</a></li><li><a href="#header-callback-de-sms-recebido">Callback de SMS Recebido</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#bibliotecas">Bibliotecas</a></div><div class="collapse-content"><ul></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#mesago.co">Mesago.co</a></div><div class="collapse-content"><ul></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#versão-em-inglês">Versão em Inglês</a></div><div class="collapse-content"><ul></ul></div></div><p style="text-align: center; word-wrap: break-word;"><a href="http://dsv.mesago.co">http://dsv.mesago.co</a></p></nav><div class="content"><div id="right-panel-background"></div><div class="middle"><header><h1 id="top">Mesago - API SMS</h1></header></div><div class="right"><h5>API Endpoint</h5><a href="http://dsv.mesago.co">http://dsv.mesago.co</a></div><div class="middle"><img src="http://dsv.mesago.co/media/app-images/logo.jpg" align="center" width="50px"/>
+                        <p>Bem vindo a API SMS da Mesago. Com ela você pode enviar SMS para todas as operadoras
+                           e receber status de entrega e respostas dos usuários de forma automática.</p>
+                        <p>Para a versão em Inglês desse documento, por favor, visite <a href="http://core.mesago.co/docs">Mesago SMS API</a>!</p>
+                        <p>Nossa API suporta nativamente dois formatos:</p>
+                        <ul>
+                            <li>
+                                <p>REST</p>
+                                <ul>
+                                    <li>O sistema deve realizar uma chamada para a URL <a href="https://core.mesago.co/api?version=1.0">https://core.mesago.co/api?version=1.0</a>,
+                                        enviando os parâmetros por meio de GET ou POST. O retorno para cada chamada será um
+                                        JSON cujo formato é detalhado ao longo desta documentação.</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <p>SOAP/XML</p>
+                                <ul>
+                                    <li>A requisição é feita por uma chamada SOAP/XML ao endereço <a href="https://core.mesago.co/ws/sms-service">https://core.mesago.co/ws/sms-service</a>,
+                                        obtendo como retorno um XML. O descritor WSDL pode ser obtido <a href="https://core.mesago.co/ws/sms-service?wsdl">neste link</a>.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <h1 id="header-autenticação">Autenticação <a class="permalink" href="#header-autenticação" aria-hidden="true">¶</a></h1>
+                        <p>Todas as requisições a API SMS da Mesago devem utilizar cabeçalhos <strong>Basic Authorization</strong>.
+                           Neste campo deve ser informado sua conta e senha de integração que enviamos por e-mail.
+                           Caso haja erro na autenticação, o respectivo código de erro será retornado.</p>
+                        <p>Authorization: Basic Y29udGE6c2VuaGE=</p>
+                        <p>O valor após a palavra <code>Basic</code> é uma chave Base64 da sua conta e senha.
+                           Para obter o valor, utilize o o comando base64 do linux:</p>
+                        <p>$ echo -n conta:senha | base64
+                           Y29udGE6c2VuaGE=</p>
+                        <p>O site <a href="https://www.base64encode.org">base64Encode</a> também faz essa codificação gratuitamente.</p>
+                        <h1 id="header-parâmetro-id">Parâmetro Id <a class="permalink" href="#header-parâmetro-id" aria-hidden="true">¶</a></h1>
+                        <p>Ao enviar um SMS, recomendamos que você utilize o parâmetro <code>correlationId</code>.
+                           Ele serve como um identificador único de sua mensagem em nossa plataforma e
+                           pode ser utilizado para consulta de status ou mesmo para proteção contra
+                           envios duplicados.</p>
+                        <h1 id="header-tabela-de-status">Tabela de Status <a class="permalink" href="#header-tabela-de-status" aria-hidden="true">¶</a></h1>
+                        <p>As chamadas à API irão retornar dois tipos de código. Um <code>statusCode</code> e <code>detailCode</code>
+                           A seguir, veja a lista de status suportados pela nossa API:</p>
+                        <h3 id="header-statuscode">statusCode <a class="permalink" href="#header-statuscode" aria-hidden="true">¶</a></h3>
+<pre><code><span class="hljs-number">00</span> - Ok
+        <span class="hljs-number">01</span> - Scheduled
+        <span class="hljs-number">02</span> - Sent
+        <span class="hljs-number">03</span> - Delivered
+        <span class="hljs-number">04</span> - Not Received
+        <span class="hljs-number">05</span> - Blocked - No Coverage
+        <span class="hljs-number">06</span> - Blocked - Black listed
+        <span class="hljs-number">07</span> - Blocked - Invalid Number
+        <span class="hljs-number">08</span> - Blocked - Content not allowed
+        <span class="hljs-number">08</span> - Blocked - Message Expired
+        <span class="hljs-number">09</span> - Blocked
+        <span class="hljs-number">10</span> - Error</code></pre>
+                        <h3 id="header-detailcode">detailCode <a class="permalink" href="#header-detailcode" aria-hidden="true">¶</a></h3>
+<pre><code><span class="hljs-number">000</span> - Message Sent
+        <span class="hljs-number">002</span> - Message successfully canceled
+        <span class="hljs-number">010</span> - Empty message content
+        <span class="hljs-number">011</span> - Message body invalid
+        <span class="hljs-number">012</span> - Message content overflow
+        <span class="hljs-number">013</span> - Incorrect <span class="hljs-keyword">or</span> incomplete ‘destination’ mobile <span class="hljs-type">number</span>
+        <span class="hljs-number">014</span> - Empty ‘destination’ mobile <span class="hljs-type">number</span>
+        <span class="hljs-number">015</span> - Scheduling <span class="hljs-type">date</span> invalid <span class="hljs-keyword">or</span> incorrect
+        <span class="hljs-number">016</span> - ID overflow
+        <span class="hljs-number">017</span> - Parameter ‘url’ <span class="hljs-keyword">is</span> invalid <span class="hljs-keyword">or</span> incorrect
+        <span class="hljs-number">021</span> - ‘<span class="hljs-property">id</span>’ fieldismandatory
+        <span class="hljs-number">080</span> - Message <span class="hljs-keyword">with</span> same ID already sent
+        <span class="hljs-number">100</span> - Message Queued
+        <span class="hljs-number">110</span> - Message sent <span class="hljs-keyword">to</span> operator
+        <span class="hljs-number">111</span> - Message confirmation unavailable
+        <span class="hljs-number">120</span> - Message received <span class="hljs-keyword">by</span> mobile
+        <span class="hljs-number">130</span> - Message blocked
+        <span class="hljs-number">131</span> - Message blocked <span class="hljs-keyword">by</span> predictive cleansing
+        <span class="hljs-number">132</span> - Message already canceled
+        <span class="hljs-number">133</span> - Message content <span class="hljs-keyword">in</span> analysis
+        <span class="hljs-number">134</span> - Message blocked <span class="hljs-keyword">by</span> forbidden content
+        <span class="hljs-number">135</span> - CorrelationId <span class="hljs-keyword">is</span> Invalid <span class="hljs-keyword">or</span> Inactive
+        <span class="hljs-number">136</span> - Message expired
+        <span class="hljs-number">140</span> - Mobile <span class="hljs-type">number</span> <span class="hljs-keyword">not</span> covered
+        <span class="hljs-number">141</span> - International sending <span class="hljs-keyword">not</span> allowed
+        <span class="hljs-number">145</span> - Inactive mobile <span class="hljs-type">number</span>
+        <span class="hljs-number">150</span> - Message expired <span class="hljs-keyword">in</span> operator
+        <span class="hljs-number">160</span> - Operator network <span class="hljs-keyword">error</span>
+        <span class="hljs-number">161</span> - Message rejected <span class="hljs-keyword">by</span> operator
+        <span class="hljs-number">162</span> - Message cancelled <span class="hljs-keyword">or</span> blocked <span class="hljs-keyword">by</span> operator
+        <span class="hljs-number">170</span> - Bad message
+        <span class="hljs-number">171</span> - Bad <span class="hljs-type">number</span>
+        <span class="hljs-number">172</span> - Missing parameter
+        <span class="hljs-number">173</span> - Gateway don't defined <span class="hljs-keyword">to</span> user
+        <span class="hljs-number">180</span> - Message ID notfound
+        <span class="hljs-number">190</span> - Unknown <span class="hljs-keyword">error</span>
+        <span class="hljs-number">200</span> - Messages Sent
+        <span class="hljs-number">210</span> - Messages scheduled <span class="hljs-keyword">but</span> Account Limit Reached
+        <span class="hljs-number">240</span> - File empty <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> sent
+        <span class="hljs-number">241</span> - File too large
+        <span class="hljs-number">242</span> - File readerror
+        <span class="hljs-number">300</span> - Received messages found
+        <span class="hljs-number">301</span> - No received messages found
+        <span class="hljs-number">400</span> - Entity saved
+        <span class="hljs-number">900</span> - Authentication <span class="hljs-keyword">error</span>
+        <span class="hljs-number">901</span> - Account type <span class="hljs-keyword">not</span> support this operation.
+        <span class="hljs-number">990</span> - Account Limit Reached – Please contact support
+        <span class="hljs-number">998</span> - Wrong operation requested
+        <span class="hljs-number">999</span> - Unknown Error</code></pre>
+                    </div><div class="middle"><section id="serviços-da-api" class="resource-group"><h2 class="group-heading">Serviços da API <a href="#serviços-da-api" class="permalink">&para;</a></h2></section></div><div class="middle"><div id="serviços-da-api-envio-de-um-único-sms" class="resource"><h3 class="resource-heading">Envio de um único SMS <a href="#serviços-da-api-envio-de-um-único-sms" class="permalink">&para;</a></h3></div></div><div class="right"><div class="definition"><span class="method post">POST</span>&nbsp;<span class="uri"><span class="hostname">http://dsv.mesago.co</span>/api/send-sms</span></div><div class="tabs"><div class="example-names"><span>Requests</span><span class="tab-button">example 1</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span><br><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Basic YWRtaW46YWRtaW4xMjM=</span><br><span class="hljs-attribute">Accept</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "<span class="hljs-attribute">sendSmsRequest</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">destination</span>": <span class="hljs-value"><span class="hljs-string">"5519900001111"</span></span>,
+    "<span class="hljs-attribute">messageText</span>": <span class="hljs-value"><span class="hljs-string">"Hello, I am a message"</span></span>,
+    "<span class="hljs-attribute">correlationId</span>": <span class="hljs-value"><span class="hljs-string">"myId"</span></span>,
+    "<span class="hljs-attribute">extraInfo</span>": <span class="hljs-value"><span class="hljs-string">"{\"name\": \"Bob\"}"</span></span>,
+    "<span class="hljs-attribute">timeWindow</span>": <span class="hljs-value">[
+      <span class="hljs-number">11</span>,
+      <span class="hljs-number">12</span>,
+      <span class="hljs-number">18</span>,
+      <span class="hljs-number">19</span>,
+      <span class="hljs-number">20</span>,
+      <span class="hljs-number">21</span>
+    ]</span>,
+    "<span class="hljs-attribute">expiresDate</span>": <span class="hljs-value"><span class="hljs-string">"2016-06-10T21:00:00"</span></span>,
+    "<span class="hljs-attribute">scheduledDate</span>": <span class="hljs-value"><span class="hljs-string">"2016-06-08T10:00:00"</span></span>,
+    "<span class="hljs-attribute">timeZone</span>": <span class="hljs-value"><span class="hljs-string">"America/Sao_Paulo"</span>
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="tabs"><div class="example-names"><span>Responses</span><span class="tab-button">201</span><span class="tab-button">500</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            "<span class="hljs-attribute">sendSmsResponse</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">statusCode</span>": <span class="hljs-value"><span class="hljs-string">"00"</span></span>,
+    "<span class="hljs-attribute">statusDescription</span>": <span class="hljs-value"><span class="hljs-string">"Ok"</span></span>,
+    "<span class="hljs-attribute">detailCode</span>": <span class="hljs-value"><span class="hljs-string">"000"</span></span>,
+    "<span class="hljs-attribute">detailDescription</span>": <span class="hljs-value"><span class="hljs-string">"Message Sent"</span>
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+                                                                                                                                                                                                                                                                                                                   "<span class="hljs-attribute">sendSmsResponse</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">statusCode</span>": <span class="hljs-value"><span class="hljs-string">"99"</span></span>,
+    "<span class="hljs-attribute">statusDescription</span>": <span class="hljs-value"><span class="hljs-string">"Nok"</span></span>,
+    "<span class="hljs-attribute">detailCode</span>": <span class="hljs-value"><span class="hljs-string">"999"</span></span>,
+    "<span class="hljs-attribute">detailDescription</span>": <span class="hljs-value"><span class="hljs-string">"Invalid User"</span>
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="serviços-da-api-envio-de-um-único-sms-post" class="action post"><h4 class="action-heading"><div class="name"> Envio de um único SMS</div><a href="#serviços-da-api-envio-de-um-único-sms-post" class="method post">POST</a><code class="uri">/api/send-sms</code></h4><p>Este serviço envia um SMS para o celular do destinatário. Com ele é possível enviar mensagens de texto curtas e longas.</p>
+                            <p>###Mensagens curtas (até 160 caracteres)</p>
+                            <p>Veja abaixo os exemplos da chamada de mensagens curtas:</p>
+                            <p><strong>Exemplo #1</strong>:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">sendSmsRequest</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">destination</span>":<span class="hljs-value"><span class="hljs-string">"5519900001111"</span></span>,
+        "<span class="hljs-attribute">messageText</span>":<span class="hljs-value"><span class="hljs-string">"Hello, I am a simple message"</span>
+        </span>}
+</span>}</code></pre>
+                            <p><strong>Exemplo #2</strong>:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">sendSmsRequest</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">destination</span>":<span class="hljs-value"><span class="hljs-string">"5519900001111"</span></span>,
+        "<span class="hljs-attribute">messageText</span>":<span class="hljs-value"><span class="hljs-string">"Hello, I am a message"</span></span>,
+        "<span class="hljs-attribute">correlationId</span>":<span class="hljs-value"><span class="hljs-string">"myId"</span></span>,
+        "<span class="hljs-attribute">extraInfo</span>":<span class="hljs-value"><span class="hljs-string">"{\"name\": \"Bob\"}"</span></span>,
+        "<span class="hljs-attribute">timeWindow</span>":<span class="hljs-value">[
+            <span class="hljs-number">11</span>, <span class="hljs-number">12</span>, <span class="hljs-number">18</span>, <span class="hljs-number">19</span>, <span class="hljs-number">20</span>, <span class="hljs-number">21</span>
+        ]
+        </span>}
+</span>}</code></pre>
+                            <p><strong>Exemplo #3</strong>:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">sendSmsRequest</span>": <span class="hljs-value">{
+          "<span class="hljs-attribute">destination</span>":<span class="hljs-value"><span class="hljs-string">"5519900001111"</span></span>,
+          "<span class="hljs-attribute">messageText</span>":<span class="hljs-value"><span class="hljs-string">"Hello, I am a message"</span></span>,
+          "<span class="hljs-attribute">correlationId</span>":<span class="hljs-value"><span class="hljs-string">"myId"</span></span>,
+          "<span class="hljs-attribute">extraInfo</span>":<span class="hljs-value"><span class="hljs-string">"{\"name\": \"Bob\"}"</span></span>,
+          "<span class="hljs-attribute">timeWindow</span>":<span class="hljs-value">[
+            <span class="hljs-number">11</span>, <span class="hljs-number">12</span>, <span class="hljs-number">18</span>, <span class="hljs-number">19</span>, <span class="hljs-number">20</span>, <span class="hljs-number">21</span>
+          ]</span>,
+          "<span class="hljs-attribute">expiresDate</span>":<span class="hljs-value"><span class="hljs-string">"2016-06-10T21:00:00"</span></span>,
+          "<span class="hljs-attribute">scheduledDate</span>":<span class="hljs-value"><span class="hljs-string">"2016-06-08T10:00:00"</span></span>,
+          "<span class="hljs-attribute">timeZone</span>":<span class="hljs-value"><span class="hljs-string">"America/Sao_Paulo"</span>
+        </span>}
+</span>}</code></pre>
+                            <p><strong>Exemplo #4</strong>:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">sendSmsRequest</span>": <span class="hljs-value">{
+          "<span class="hljs-attribute">destination</span>":<span class="hljs-value"><span class="hljs-string">"5519900001111"</span></span>,
+          "<span class="hljs-attribute">messageText</span>":<span class="hljs-value"><span class="hljs-string">"Hello, I am a message"</span></span>,
+          "<span class="hljs-attribute">correlationId</span>":<span class="hljs-value"><span class="hljs-string">"myId"</span></span>,
+          "<span class="hljs-attribute">flashSMS</span>":<span class="hljs-value"><span class="hljs-string">"true"</span>
+        </span>}
+</span>}</code></pre>
+                            <p>Em resposta à chamada, a API da Mesago retornará um status de controle:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">sendSmsResponse</span>" : <span class="hljs-value">{
+            "<span class="hljs-attribute">statusCode</span>" : <span class="hljs-value"><span class="hljs-string">"00"</span></span>,
+            "<span class="hljs-attribute">statusDescription</span>" : <span class="hljs-value"><span class="hljs-string">"Ok"</span></span>,
+            "<span class="hljs-attribute">detailCode</span>" : <span class="hljs-value"><span class="hljs-string">"000"</span></span>,
+            "<span class="hljs-attribute">detailDescription</span>" : <span class="hljs-value"><span class="hljs-string">"Message Sent"</span>
+        </span>}
+    </span>}</code></pre>
+                            <p>Outro exemplo de retorno síncrono da chamada:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">sendSmsResponse</span>" : <span class="hljs-value">{
+            "<span class="hljs-attribute">statusCode</span>" : <span class="hljs-value"><span class="hljs-string">"05"</span></span>,
+            "<span class="hljs-attribute">statusDescription</span>" : <span class="hljs-value"><span class="hljs-string">"Blocked"</span></span>,
+            "<span class="hljs-attribute">detailCode</span>" : <span class="hljs-value"><span class="hljs-string">"140"</span></span>,
+            "<span class="hljs-attribute">detailDescription</span>" : <span class="hljs-value"><span class="hljs-string">"Mobile number not covered"</span>
+        </span>}
+    </span>}</code></pre>
+                            <p>###Mensagens longas (mais de 160 caracteres)</p>
+                            <p>Para envio de mensagens longas é necessário entrar em contato com nossa equipe de atendimento e solicitar que sua conta seja habilitada para esse tipo de envio.</p>
+                            <p>Cada parte da mensagem contém até 152 caracteres, pois há uma reserva de 8 caracteres para que seja feita a identificação das partes que compõem a mensagem. Essa identificação é necessária para que os aparelhos interepretem como uma única mensagem. Além disso, como o particionamento das mensagens será realizada no último caractere de espaço, ou seja, palavras não serão truncadas, a mensagem pode ser particionada com menos de 152 caracteres.</p>
+                            <p>Para esse tipo de envio a requisição será idêntica a requisição de envio de mensagens curtas. Basta enviar o texto da mensagem longa no atributo ‘msg’ com mais de 160 caracteres. Nossa plataforma tratará o texto do atributo <code>msg</code> como uma mensagem longa.</p>
+                            <p>Há limitação de 1520 caracteres somando-se os caracteres dos atributos <code>from</code> e <code>msg</code>.</p>
+                            <p>Veja abaixo o exemplo da chamada de mensagens longas:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">sendSmsRequest</span>": <span class="hljs-value">{
+            "<span class="hljs-attribute">destination</span>":<span class="hljs-value"><span class="hljs-string">"5519900001111"</span></span>,
+            "<span class="hljs-attribute">messageText</span>":<span class="hljs-value"><span class="hljs-string">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut blandit neque consectetur, faucibus tortor varius, posuere enim. Cras tincidunt lectus eget pulvinar consectetur. Suspendisse in nibh elit. Ut non pharetra risus, nec aliquet lectus. Sed convallis mauris vitae lectus consequat, non mollis nibh hendrerit. Ut tristique commodo ligula eu bibendum. Quisque vestibulum quis nisi id ultrices."</span></span>,
+            "<span class="hljs-attribute">correlationId</span>":<span class="hljs-value"><span class="hljs-string">"myId"</span></span>,
+            "<span class="hljs-attribute">callbackOption</span>": <span class="hljs-value"><span class="hljs-string">"NONE"</span></span>,
+            "<span class="hljs-attribute">extraInfo</span>":<span class="hljs-value"><span class="hljs-string">"{\"name\": \"Bob\"}"</span></span>,
+            "<span class="hljs-attribute">timeWindow</span>":<span class="hljs-value">[
+                <span class="hljs-number">11</span>, <span class="hljs-number">12</span>, <span class="hljs-number">18</span>, <span class="hljs-number">19</span>, <span class="hljs-number">20</span>, <span class="hljs-number">21</span>
+            ]
+        </span>}
+    </span>}</code></pre>
+                            <p>Em resposta à chamada, a API da Mesago retornará um status de controle. O objeto <code>parts</code> foi introduzido para representar as partes da mensagem longa e possui os atributos <code>partId</code> e <code>order</code> que representam o identificador e a ordem de cada parte, respectivamente:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">sendSmsResponse</span>" : <span class="hljs-value">{
+            "<span class="hljs-attribute">statusCode</span>": <span class="hljs-value"><span class="hljs-string">"00"</span></span>,
+            "<span class="hljs-attribute">statusDescription</span>": <span class="hljs-value"><span class="hljs-string">"Ok"</span></span>,
+            "<span class="hljs-attribute">detailCode</span>": <span class="hljs-value"><span class="hljs-string">"000"</span></span>,
+            "<span class="hljs-attribute">detailDescription</span>": <span class="hljs-value"><span class="hljs-string">"Message Sent"</span></span>,
+            "<span class="hljs-attribute">parts</span>": <span class="hljs-value">[
+                {
+                    "<span class="hljs-attribute">partId</span>": <span class="hljs-value"><span class="hljs-string">"idteste_001"</span></span>,
+                    "<span class="hljs-attribute">order</span>": <span class="hljs-value"><span class="hljs-number">1</span>
+                </span>},
+                {
+                    "<span class="hljs-attribute">partId</span>": <span class="hljs-value"><span class="hljs-string">"idteste_002"</span></span>,
+                    "<span class="hljs-attribute">order</span>": <span class="hljs-value"><span class="hljs-number">2</span>
+                </span>},
+                {
+                    "<span class="hljs-attribute">partId</span>": <span class="hljs-value"><span class="hljs-string">"idteste_003"</span></span>,
+                    "<span class="hljs-attribute">order</span>": <span class="hljs-value"><span class="hljs-number">3</span>
+                </span>}
+            ]
+        </span>}
+    </span>}</code></pre>
+                            <p><em>Para receber retornos assíncronos, consulte o menu Callbacks da API.</em></p>
+                        </div></div><hr class="split"><div class="middle"><div id="serviços-da-api-envio-de-vários-smss-simultaneamente" class="resource"><h3 class="resource-heading">Envio de vários SMSs simultaneamente <a href="#serviços-da-api-envio-de-vários-smss-simultaneamente" class="permalink">&para;</a></h3></div></div><div class="right"><div class="definition"><span class="method post">POST</span>&nbsp;<span class="uri"><span class="hostname">http://dsv.mesago.co</span>/api/send-sms-multiple</span></div><div class="tabs"><div class="example-names"><span>Requests</span><span class="tab-button">example 1</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span><br><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Basic YWRtaW46YWRtaW4=</span><br><span class="hljs-attribute">Accept</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  "<span class="hljs-attribute">sendSmsMultiRequest</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">messages</span>": <span class="hljs-value">[
+      {
+        "<span class="hljs-attribute">destination</span>": <span class="hljs-value"><span class="hljs-string">"5519900001111"</span></span>,
+        "<span class="hljs-attribute">correlationId</span>": <span class="hljs-value"><span class="hljs-string">"0001"</span>
+      </span>},
+      {
+        "<span class="hljs-attribute">destination</span>": <span class="hljs-value"><span class="hljs-string">"5519900002222"</span></span>,
+        "<span class="hljs-attribute">correlationId</span>": <span class="hljs-value"><span class="hljs-string">"0002"</span>
+      </span>}
+    ]</span>,
+    "<span class="hljs-attribute">defaultValues</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">messageText</span>": <span class="hljs-value"><span class="hljs-string">"Default message"</span></span>,
+      "<span class="hljs-attribute">flashSMS</span>": <span class="hljs-value"><span class="hljs-string">"true"</span>
+    </span>}
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="tabs"><div class="example-names"><span>Responses</span><span class="tab-button">201</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+                                                                                                                                                                                                                                                                                                                                                                                                                         "<span class="hljs-attribute">sendSmsMultiResponse</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">sendSmsResponseList</span>": <span class="hljs-value">[
+      {
+        "<span class="hljs-attribute">statusCode</span>": <span class="hljs-value"><span class="hljs-string">"00"</span></span>,
+        "<span class="hljs-attribute">statusDescription</span>": <span class="hljs-value"><span class="hljs-string">"Ok"</span></span>,
+        "<span class="hljs-attribute">detailCode</span>": <span class="hljs-value"><span class="hljs-string">"000"</span></span>,
+        "<span class="hljs-attribute">detailDescription</span>": <span class="hljs-value"><span class="hljs-string">"Message Sent"</span>
+      </span>},
+      {
+        "<span class="hljs-attribute">statusCode</span>": <span class="hljs-value"><span class="hljs-string">"00"</span></span>,
+        "<span class="hljs-attribute">statusDescription</span>": <span class="hljs-value"><span class="hljs-string">"Ok"</span></span>,
+        "<span class="hljs-attribute">detailCode</span>": <span class="hljs-value"><span class="hljs-string">"000"</span></span>,
+        "<span class="hljs-attribute">detailDescription</span>": <span class="hljs-value"><span class="hljs-string">"Message Sent"</span>
+      </span>}
+    ]
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="serviços-da-api-envio-de-vários-smss-simultaneamente-post" class="action post"><h4 class="action-heading"><div class="name"> Envio de vários SMSs simultaneamente</div><a href="#serviços-da-api-envio-de-vários-smss-simultaneamente-post" class="method post">POST</a><code class="uri">/api/send-sms-multiple</code></h4><p>###Mensagens curtas (até 160 caracteres)</p>
+                            <p>Este método recebe uma lista de objetos <code>sendSmsRequest</code>, é possível configurar uma mensagem Default para todos os destinatários no campo <code>defaultValues</code>.</p>
+                            <p><strong>Exemplo</strong> #1:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">sendSmsMultiRequest</span>":<span class="hljs-value">{
+              "<span class="hljs-attribute">messages</span>":<span class="hljs-value">[
+                {
+                  "<span class="hljs-attribute">destination</span>":<span class="hljs-value"><span class="hljs-string">"5519900001111"</span></span>,
+                  "<span class="hljs-attribute">messageText</span>":<span class="hljs-value"><span class="hljs-string">"First message"</span>
+                </span>},
+                {
+                  "<span class="hljs-attribute">destination</span>":<span class="hljs-value"><span class="hljs-string">"5519900002222"</span>
+                </span>},
+                {
+                  "<span class="hljs-attribute">destination</span>":<span class="hljs-value"><span class="hljs-string">"5519900003333"</span>
+                </span>}
+              ]</span>,
+              "<span class="hljs-attribute">defaultValues</span>":<span class="hljs-value">{
+                "<span class="hljs-attribute">messageText</span>":<span class="hljs-value"><span class="hljs-string">"Default message"</span>
+              </span>}
+        </span>}
+    </span>}</code></pre>
+                            <p><strong>Exemplo</strong> #2:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">sendSmsMultiRequest</span>":<span class="hljs-value">{
+              "<span class="hljs-attribute">messages</span>":<span class="hljs-value">[
+                {
+                  "<span class="hljs-attribute">destination</span>":<span class="hljs-value"><span class="hljs-string">"5519900001111"</span></span>,
+                  "<span class="hljs-attribute">messageText</span>":<span class="hljs-value"><span class="hljs-string">"First message"</span>
+                </span>},
+                {
+                  "<span class="hljs-attribute">destination</span>":<span class="hljs-value"><span class="hljs-string">"5519900002222"</span>
+                </span>}
+              ]</span>,
+              "<span class="hljs-attribute">timeZone</span>":<span class="hljs-value"><span class="hljs-string">"America/Sao_Paulo"</span></span>,
+              "<span class="hljs-attribute">scheduleDate</span>": <span class="hljs-value"><span class="hljs-string">"2017-01-28T02:30:43"</span></span>,
+              "<span class="hljs-attribute">timeWindow</span>": <span class="hljs-value">[<span class="hljs-number">12</span>, <span class="hljs-number">15</span>, <span class="hljs-number">20</span>]</span>,
+              "<span class="hljs-attribute">defaultValues</span>":<span class="hljs-value">{
+                "<span class="hljs-attribute">messageText</span>":<span class="hljs-value"><span class="hljs-string">"Default message"</span>
+              </span>}
+        </span>}
+    </span>}</code></pre>
+                            <p><strong>Exemplo</strong> #3:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">sendSmsMultiRequest</span>":<span class="hljs-value">{
+
+              "<span class="hljs-attribute">messages</span>":<span class="hljs-value">[
+                {
+                  "<span class="hljs-attribute">destination</span>":<span class="hljs-value"><span class="hljs-string">"5519900001111"</span>
+                </span>},
+                {
+                  "<span class="hljs-attribute">destination</span>":<span class="hljs-value"><span class="hljs-string">"5519900002222"</span>
+                </span>}
+              ]</span>,
+              "<span class="hljs-attribute">defaultValues</span>":<span class="hljs-value">{
+                "<span class="hljs-attribute">messageText</span>":<span class="hljs-value"><span class="hljs-string">"Default message"</span></span>,
+                "<span class="hljs-attribute">flashSMS</span>":<span class="hljs-value"><span class="hljs-string">"true"</span>
+              </span>}
+        </span>}
+    </span>}</code></pre>
+                            <p>###Mensagens longas (mais de 160 caracteres)</p>
+                            <p>Para envio de mensagens longas é necessário entrar em contato com nossa equipe de atendimento e solicitar que sua conta seja habilitada para esse tipo de envio.</p>
+                            <p>Cada parte da mensagem contém até 152 caracteres, pois há uma reserva de 8 caracteres para que seja feita a identificação das partes que compõem a mensagem. Essa identificação é necessária para que os aparelhos interepretem como uma única mensagem. Além disso, como o particionamento das mensagens será realizada no último caractere de espaço, ou seja, palavras não serão truncadas, a mensagem pode ser particionada com menos de 152 caracteres.</p>
+                            <p>Para esse tipo de envio a requisição será idêntica a requisição de envio de mensagens curtas múltiplas.</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">sendSmsMultiRequest</span>":<span class="hljs-value">{
+
+              "<span class="hljs-attribute">messages</span>":<span class="hljs-value">[
+                {
+                  "<span class="hljs-attribute">destination</span>":<span class="hljs-value"><span class="hljs-string">"5519900001111"</span></span>,
+                },
+                {
+                  "<span class="hljs-attribute">destination</span>":<span class="hljs-value"><span class="hljs-string">"5519900002222"</span>
+                </span>}
+              ]</span>,
+              "<span class="hljs-attribute">defaultValues</span>":<span class="hljs-value">{
+                "<span class="hljs-attribute">messageText</span>":<span class="hljs-value"><span class="hljs-string">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut blandit neque consectetur, faucibus tortor varius, posuere enim. Cras tincidunt lectus eget pulvinar consectetur. Suspendisse in nibh elit. Ut non pharetra risus, nec aliquet lectus. Sed convallis mauris vitae lectus consequat, non mollis nibh hendrerit. Ut tristique commodo ligula eu bibendum. Quisque vestibulum quis nisi id ultrices."</span></span>,
+                "<span class="hljs-attribute">flashSMS</span>":<span class="hljs-value"><span class="hljs-string">"true"</span>
+              </span>}
+        </span>}
+    </span>}</code></pre>
+                            <p>Em resposta à chamada, a API da Mesago retornará um status de controle. O objeto <code>parts</code> foi introduzido para representar as partes da mensagem longa e possui os atributos <code>partId</code> e <code>order</code> que representam o identificador e a ordem de cada parte, respectivamente:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">sendSmsMultiResponse</span>": <span class="hljs-value">{
+            "<span class="hljs-attribute">sendSmsResponseList</span>": <span class="hljs-value">[
+                {
+                    "<span class="hljs-attribute">statusCode</span>": <span class="hljs-value"><span class="hljs-string">"00"</span></span>,
+                    "<span class="hljs-attribute">statusDescription</span>": <span class="hljs-value"><span class="hljs-string">"Ok"</span></span>,
+                    "<span class="hljs-attribute">detailCode</span>": <span class="hljs-value"><span class="hljs-string">"000"</span></span>,
+                    "<span class="hljs-attribute">detailDescription</span>": <span class="hljs-value"><span class="hljs-string">"Message Sent"</span></span>,
+                    "<span class="hljs-attribute">parts</span>": <span class="hljs-value">[
+                        {
+                            "<span class="hljs-attribute">partId</span>": <span class="hljs-value"><span class="hljs-string">"idteste1_001"</span></span>,
+                            "<span class="hljs-attribute">order</span>": <span class="hljs-value"><span class="hljs-number">1</span>
+                        </span>},
+                        {
+                            "<span class="hljs-attribute">partId</span>": <span class="hljs-value"><span class="hljs-string">"idteste1_002"</span></span>,
+                            "<span class="hljs-attribute">order</span>": <span class="hljs-value"><span class="hljs-number">2</span>
+                        </span>},
+                        {
+                            "<span class="hljs-attribute">partId</span>": <span class="hljs-value"><span class="hljs-string">"idteste1_003"</span></span>,
+                            "<span class="hljs-attribute">order</span>": <span class="hljs-value"><span class="hljs-number">3</span>
+                        </span>}
+                    ]
+                </span>},
+                {
+                    "<span class="hljs-attribute">statusCode</span>": <span class="hljs-value"><span class="hljs-string">"00"</span></span>,
+                    "<span class="hljs-attribute">statusDescription</span>": <span class="hljs-value"><span class="hljs-string">"Ok"</span></span>,
+                    "<span class="hljs-attribute">detailCode</span>": <span class="hljs-value"><span class="hljs-string">"000"</span></span>,
+                    "<span class="hljs-attribute">detailDescription</span>": <span class="hljs-value"><span class="hljs-string">"Message Sent"</span></span>,
+                    "<span class="hljs-attribute">parts</span>": <span class="hljs-value">[
+                        {
+                            "<span class="hljs-attribute">partId</span>": <span class="hljs-value"><span class="hljs-string">"idteste2"</span></span>,
+                            "<span class="hljs-attribute">order</span>": <span class="hljs-value"><span class="hljs-number">1</span>
+                        </span>}
+                    ]
+                </span>}
+            ]
+        </span>}
+    </span>}</code></pre>
+                        </div></div><hr class="split"><div class="middle"><div id="serviços-da-api-consulta-status-de-um-sms" class="resource"><h3 class="resource-heading">Consulta Status de um SMS <a href="#serviços-da-api-consulta-status-de-um-sms" class="permalink">&para;</a></h3></div></div><div class="right"><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname">http://dsv.mesago.co</span>/api/get-sms-status/id/<span class="hljs-attribute" title="id">004</span></span></div><div class="tabs"><div class="example-names"><span>Requests</span><span class="tab-button">example 1</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Basic YWRtaW46YWRtaW4=</span></code></pre><div style="height: 1px;"></div></div></div><div class="tabs"><div class="example-names"><span>Responses</span><span class="tab-button">200</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "<span class="hljs-attribute">getSmsStatusResp</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"006"</span></span>,
+    "<span class="hljs-attribute">received</span>": <span class="hljs-value"><span class="hljs-string">"2014-08-23T02:01:23"</span></span>,
+    "<span class="hljs-attribute">shortcode</span>": <span class="hljs-value"><span class="hljs-number">69788</span></span>,
+    "<span class="hljs-attribute">mobileOperatorName</span>": <span class="hljs-value"><span class="hljs-string">"claro"</span></span>,
+    "<span class="hljs-attribute">statusCode</span>": <span class="hljs-value"><span class="hljs-string">"03"</span></span>,
+    "<span class="hljs-attribute">statusDescription</span>": <span class="hljs-value"><span class="hljs-string">"Delivered"</span></span>,
+    "<span class="hljs-attribute">detailCode</span>": <span class="hljs-value"><span class="hljs-string">"120"</span></span>,
+    "<span class="hljs-attribute">detailDescription</span>": <span class="hljs-value"><span class="hljs-string">"Message received by mobile"</span>
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="serviços-da-api-consulta-status-de-um-sms-get" class="action get"><h4 class="action-heading"><div class="name"> Consulta de Status de um SMS</div><a href="#serviços-da-api-consulta-status-de-um-sms-get" class="method get">GET</a><code class="uri">/api/get-sms-status/id/{id}</code></h4><p>Consulta o status de entrega de uma mensagem previamente enviada usando seu identificador <code>id</code> como referência.</p>
+                            <p><strong>Importante:</strong> a consulta a um SMS fica disponível por até 24 horas após seu envio.</p>
+                            <p>Exemplo de retorno:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">getSmsStatusResp</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"006"</span></span>,
+        "<span class="hljs-attribute">received</span>": <span class="hljs-value"><span class="hljs-string">"2014-08-23T02:01:23"</span></span>,
+        "<span class="hljs-attribute">shortcode</span>": <span class="hljs-value"><span class="hljs-number">69788</span></span>,
+        "<span class="hljs-attribute">mobileOperatorName</span>": <span class="hljs-value"><span class="hljs-string">"claro"</span></span>,
+        "<span class="hljs-attribute">statusCode</span>": <span class="hljs-value"><span class="hljs-string">"03"</span></span>,
+        "<span class="hljs-attribute">statusDescription</span>": <span class="hljs-value"><span class="hljs-string">"Delivered"</span></span>,
+        "<span class="hljs-attribute">detailCode</span>": <span class="hljs-value"><span class="hljs-string">"120"</span></span>,
+        "<span class="hljs-attribute">detailDescription</span>": <span class="hljs-value"><span class="hljs-string">"Message received by mobile"</span>
+      </span>}
+    </span>}</code></pre>
+                            <div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>string</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>004</span></span><p>Identificador da mensagem informado no momento do envio</p>
+                                    </dd></dl></div></div></div><hr class="split"><div class="middle"><div id="serviços-da-api-listar-novos-sms-recebidos" class="resource"><h3 class="resource-heading">Listar Novos SMS recebidos <a href="#serviços-da-api-listar-novos-sms-recebidos" class="permalink">&para;</a></h3></div></div><div class="right"><div class="definition"><span class="method post">POST</span>&nbsp;<span class="uri"><span class="hostname">http://dsv.mesago.co</span>/api/received/list</span></div><div class="tabs"><div class="example-names"><span>Requests</span><span class="tab-button">example 1</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span><br><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Basic YWRtaW46YWRtaW4=</span></code></pre><div style="height: 1px;"></div></div></div><div class="tabs"><div class="example-names"><span>Responses</span><span class="tab-button">200</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       "<span class="hljs-attribute">receivedResponse</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">statusCode</span>": <span class="hljs-value"><span class="hljs-string">"00"</span></span>,
+    "<span class="hljs-attribute">statusDescription</span>": <span class="hljs-value"><span class="hljs-string">"Ok"</span></span>,
+    "<span class="hljs-attribute">detailCode</span>": <span class="hljs-value"><span class="hljs-string">"300"</span></span>,
+    "<span class="hljs-attribute">detailDescription</span>": <span class="hljs-value"><span class="hljs-string">"Received messages found"</span></span>,
+    "<span class="hljs-attribute">receivedMessages</span>": <span class="hljs-value">[
+      {
+        "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">23190501</span></span>,
+        "<span class="hljs-attribute">dateReceived</span>": <span class="hljs-value"><span class="hljs-string">"2014-08-22T14:49:36"</span></span>,
+        "<span class="hljs-attribute">mobile</span>": <span class="hljs-value"><span class="hljs-string">"5511991070316"</span></span>,
+        "<span class="hljs-attribute">shortcode</span>": <span class="hljs-value"><span class="hljs-string">"30133"</span></span>,
+        "<span class="hljs-attribute">mobileOperatorName</span>": <span class="hljs-value"><span class="hljs-string">"Claro"</span></span>,
+        "<span class="hljs-attribute">correlationId</span>": <span class="hljs-value"><span class="hljs-string">"hs863223748"</span>
+      </span>}
+    ]
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="serviços-da-api-listar-novos-sms-recebidos-post" class="action post"><h4 class="action-heading"><div class="name"> Listar Novos SMS recebidos</div><a href="#serviços-da-api-listar-novos-sms-recebidos-post" class="method post">POST</a><code class="uri">/api/received/list</code></h4><p>Retorna a lista de novos SMSs recebidos. Uma vez cosultado, o SMS
+                                                                                                                                                                                                                                                                                                                                                                                                                               não irá mais ser retornado na chamada deste serviço.</p>
+                            <p>Exemplo de retorno:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">receivedResponse</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">statusCode</span>": <span class="hljs-value"><span class="hljs-string">"00"</span></span>,
+        "<span class="hljs-attribute">statusDescription</span>": <span class="hljs-value"><span class="hljs-string">"Ok"</span></span>,
+        "<span class="hljs-attribute">detailCode</span>": <span class="hljs-value"><span class="hljs-string">"300"</span></span>,
+        "<span class="hljs-attribute">detailDescription</span>": <span class="hljs-value"><span class="hljs-string">"Received messages found"</span></span>,
+        "<span class="hljs-attribute">receivedMessages</span>": <span class="hljs-value">[
+          {
+            "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">23190501</span></span>,
+            "<span class="hljs-attribute">dateReceived</span>": <span class="hljs-value"><span class="hljs-string">"2014-08-22T14:49:36"</span></span>,
+            "<span class="hljs-attribute">mobile</span>": <span class="hljs-value"><span class="hljs-string">"5511991070316"</span></span>,
+            "<span class="hljs-attribute">shortcode</span>": <span class="hljs-value"><span class="hljs-string">"30133"</span></span>,
+            "<span class="hljs-attribute">mobileOperatorName</span>": <span class="hljs-value"><span class="hljs-string">"Claro"</span></span>,
+            "<span class="hljs-attribute">correlationId</span>": <span class="hljs-value"><span class="hljs-string">"hs863223748"</span>
+          </span>}
+        ]
+      </span>}
+    </span>}</code></pre>
+                        </div></div><hr class="split"><div class="middle"><div id="serviços-da-api-consultar-sms-recebidos-por-período" class="resource"><h3 class="resource-heading">Consultar SMS recebidos por Período <a href="#serviços-da-api-consultar-sms-recebidos-por-período" class="permalink">&para;</a></h3></div></div><div class="right"><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname">http://dsv.mesago.co</span>/api/received/search/<span class="hljs-attribute" title="startDate">2014-08-22T00:00:00</span>/<span class="hljs-attribute" title="endDate">2014-08-22T23:59:59</span></span></div><div class="tabs"><div class="example-names"><span>Requests</span><span class="tab-button">example 1</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span><br><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Basic YWRtaW46YWRtaW4=</span></code></pre><div style="height: 1px;"></div></div></div><div class="tabs"><div class="example-names"><span>Responses</span><span class="tab-button">200</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "<span class="hljs-attribute">receivedResponse</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">statusCode</span>": <span class="hljs-value"><span class="hljs-string">"00"</span></span>,
+    "<span class="hljs-attribute">statusDescription</span>": <span class="hljs-value"><span class="hljs-string">"Ok"</span></span>,
+    "<span class="hljs-attribute">detailCode</span>": <span class="hljs-value"><span class="hljs-string">"300"</span></span>,
+    "<span class="hljs-attribute">detailDescription</span>": <span class="hljs-value"><span class="hljs-string">"Received messages found"</span></span>,
+    "<span class="hljs-attribute">receivedMessages</span>": <span class="hljs-value">[
+      {
+        "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">23190501</span></span>,
+        "<span class="hljs-attribute">dateReceived</span>": <span class="hljs-value"><span class="hljs-string">"2014-08-22T14:49:36"</span></span>,
+        "<span class="hljs-attribute">mobile</span>": <span class="hljs-value"><span class="hljs-string">"5511991070316"</span></span>,
+        "<span class="hljs-attribute">shortcode</span>": <span class="hljs-value"><span class="hljs-string">"30133"</span></span>,
+        "<span class="hljs-attribute">mobileOperatorName</span>": <span class="hljs-value"><span class="hljs-string">"Claro"</span></span>,
+        "<span class="hljs-attribute">correlationId</span>": <span class="hljs-value"><span class="hljs-string">"hs863223748"</span>
+      </span>}
+    ]
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="serviços-da-api-consultar-sms-recebidos-por-período-get" class="action get"><h4 class="action-heading"><div class="name"> Consultar SMS recebidos por Período</div><a href="#serviços-da-api-consultar-sms-recebidos-por-período-get" class="method get">GET</a><code class="uri">/api/received/search/{startDate}/{endDate}</code></h4><p>Retorna a lista de SMSs recebidos em um período definido.</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">receivedResponse</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">statusCode</span>": <span class="hljs-value"><span class="hljs-string">"00"</span></span>,
+        "<span class="hljs-attribute">statusDescription</span>": <span class="hljs-value"><span class="hljs-string">"Ok"</span></span>,
+        "<span class="hljs-attribute">detailCode</span>": <span class="hljs-value"><span class="hljs-string">"300"</span></span>,
+        "<span class="hljs-attribute">detailDescription</span>": <span class="hljs-value"><span class="hljs-string">"Received messages found"</span></span>,
+        "<span class="hljs-attribute">receivedMessages</span>": <span class="hljs-value">[
+          {
+            "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">23190501</span></span>,
+            "<span class="hljs-attribute">dateReceived</span>": <span class="hljs-value"><span class="hljs-string">"2014-08-22T14:49:36"</span></span>,
+            "<span class="hljs-attribute">mobile</span>": <span class="hljs-value"><span class="hljs-string">"5511991070316"</span></span>,
+            "<span class="hljs-attribute">shortcode</span>": <span class="hljs-value"><span class="hljs-string">"30133"</span></span>,
+            "<span class="hljs-attribute">mobileOperatorName</span>": <span class="hljs-value"><span class="hljs-string">"Claro"</span></span>,
+            "<span class="hljs-attribute">correlationId</span>": <span class="hljs-value"><span class="hljs-string">"hs863223748"</span>
+          </span>}
+        ]
+      </span>}
+    </span>}</code></pre>
+                            <p><strong>Atenção</strong>: Para receber o parâmetro <code>mobileOperatorName</code> você deverá solicitar ao nosso atendimento que seja habilitado em sua conta.</p>
+                            <div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>startDate</dt><dd><code>string</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>2014-08-22T00:00:00</span></span><p>Data de início da busca</p>
+                                    </dd><dt>endDate</dt><dd><code>string</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>2014-08-22T23:59:59</span></span><p>Data de fim da busca</p>
+                                    </dd></dl></div></div></div><hr class="split"><div class="middle"><div id="serviços-da-api-cancelamento-de-sms-agendado" class="resource"><h3 class="resource-heading">Cancelamento de SMS agendado <a href="#serviços-da-api-cancelamento-de-sms-agendado" class="permalink">&para;</a></h3></div></div><div class="right"><div class="definition"><span class="method post">POST</span>&nbsp;<span class="uri"><span class="hostname">http://dsv.mesago.co</span>/api/cancel-sms/id/<span class="hljs-attribute" title="id">004</span></span></div><div class="tabs"><div class="example-names"><span>Requests</span><span class="tab-button">example 1</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Basic YWRtaW46YWRtaW4=</span></code></pre><div style="height: 1px;"></div></div></div><div class="tabs"><div class="example-names"><span>Responses</span><span class="tab-button">200</span></div><div class="tab"><div><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         "cancelSmsResp" : {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         "statusCode" : "09",
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         "statusDescription" : "Blocked",
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         "detailCode” : "002",
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         "detailDescription" : "Message successfully canceled"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }</code></pre><div style="height: 1px;"></div></div></div></div></div></div></div></div><div class="middle"><div id="serviços-da-api-cancelamento-de-sms-agendado-post" class="action post"><h4 class="action-heading"><div class="name"> Cancelamento de SMS agendado</div><a href="#serviços-da-api-cancelamento-de-sms-agendado-post" class="method post">POST</a><code class="uri">/api/cancel-sms/id/{id}</code></h4><p>Cancela o envio de um SMS previamente agendado.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Para realizar o cancelamento, é necessário que tenha sido utilizado o identificador <code>id</code> no momento do envio.</p>
+                            <p><strong>Importante:</strong> o cancelamento de um SMS só pode ser feito até sua data de agendamento. Após, o SMS terá sido enviado à operadora e não poderá ser cancelado.</p>
+                            <p>Exemplo de Retorno:</p>
+<pre><code class="language-json">{
+                                 "cancelSmsResp" : {
+                                 "statusCode" : "09",
+                                 "statusDescription" : "Blocked",
+                                 "detailCode” : "002",
+                                 "detailDescription" : "Message successfully canceled"
+                                 }
+                                 }</code></pre>
+                            <div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>string</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>004</span></span><p>Identificador da mensagem informado no momento do envio</p>
+                                    </dd></dl></div></div></div><hr class="split"><div class="middle"><section id="callbacks-da-api" class="resource-group"><h2 class="group-heading">Callbacks da API <a href="#callbacks-da-api" class="permalink">&para;</a></h2><p>A API de SMS da Mesago pode realizar callbacks diretamente para o seu sistema,
+                                                                                                                                                                                                                                                                       enviando status de entrega das mensagens enviadas ou informações sobre SMS
+                                                                                                                                                                                                                                                                       recebidos de seus clientes/contatos.</p>
+                            <h2 id="header-callback-de-status-de-entrega">Callback de Status de Entrega <a class="permalink" href="#header-callback-de-status-de-entrega" aria-hidden="true">¶</a></h2>
+                            <p>A plataforma Mesago envia ao sistema do cliente o status dos SMS enviados.
+                               É possível enviar status intermediários ou finais.</p>
+                            <p>Para receber o status, é necessário configurar uma URL de notificação na
+                               plataforma Mesago.</p>
+                            <p>Exemplo do que você receberá em seu sistema:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">callbackMtRequest</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-string">"03"</span></span>,
+        "<span class="hljs-attribute">statusMessage</span>": <span class="hljs-value"><span class="hljs-string">"Delivered"</span></span>,
+        "<span class="hljs-attribute">statusDetail</span>": <span class="hljs-value"><span class="hljs-string">"120"</span></span>,
+        "<span class="hljs-attribute">statusDetailMessage</span>": <span class="hljs-value"><span class="hljs-string">"Message received by mobile"</span></span>,
+        "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"hs765939216"</span></span>,
+        "<span class="hljs-attribute">received</span>": <span class="hljs-value"><span class="hljs-string">"2014-08-26T12:55:48.593-03:00"</span></span>,
+        "<span class="hljs-attribute">mobileOperatorName</span>": <span class="hljs-value"><span class="hljs-string">"Claro"</span>
+      </span>}
+    </span>}</code></pre>
+                            <h2 id="header-callback-de-sms-recebido">Callback de SMS Recebido <a class="permalink" href="#header-callback-de-sms-recebido" aria-hidden="true">¶</a></h2>
+                            <p>A plataforma Mesago envia ao sistema do cliente um SMS recebido de um celular
+                               (esta funcionalidade é utilizada, por exemplo, para enquetes, SAC, pesquisas,
+                               confirmações de visita etc).</p>
+                            <p>Para receber um SMS em seu sistema, é necessário configurar uma URL de notificação na
+                               plataforma Mesago.</p>
+                            <p>Exemplo do que você receberá em seu sistema:</p>
+<pre><code class="language-json">{
+                                 "<span class="hljs-attribute">callbackMoRequest</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"20690090"</span></span>,
+        "<span class="hljs-attribute">mobile</span>": <span class="hljs-value"><span class="hljs-string">"555191951711"</span></span>,
+        "<span class="hljs-attribute">shortCode</span>": <span class="hljs-value"><span class="hljs-string">"40001"</span></span>,
+        "<span class="hljs-attribute">account</span>": <span class="hljs-value"><span class="hljs-string">"Mesago.envio "</span></span>,
+        "<span class="hljs-attribute">received</span>": <span class="hljs-value"><span class="hljs-string">"2014-08-26T12:27:08.488-03:00"</span></span>,
+        "<span class="hljs-attribute">campaignId</span>": <span class="hljs-value"><span class="hljs-string">"hs765939061"</span>
+      </span>}
+    </span>}</code></pre>
+                        </section></div><div class="middle"><section id="bibliotecas" class="resource-group"><h2 class="group-heading">Bibliotecas <a href="#bibliotecas" class="permalink">&para;</a></h2><p>A fim de facilitar a integração com nossa plataforma, disponibilizamos, a seguir, bibliotecas nas seguintes linguagens:</p>
+                            <p><a href="http://core.mesago.co/desenvolvedores/bibliotecas/java-rest-api.zip">JAVA</a></p>
+                            <p><a href="http://core.mesago.co/desenvolvedores/bibliotecas/php-rest-api.zip">PHP</a></p>
+                            <p><a href="http://core.mesago.co/desenvolvedores/bibliotecas/html-js-rest-api.rar">JAVASCRIPT</a></p>
+                        </section></div><div class="middle"><section id="mesago.co" class="resource-group"><h2 class="group-heading">Mesago.co <a href="#mesago.co" class="permalink">&para;</a></h2><p>Somos líderes no mercado de serviços móveis no Brasil.
+                                                                                                                                                                                                        Há mais de 12 dias, entregamos soluções para ampliar resultados e
+                                                                                                                                                                                                        gerar cada vez mais interatividade entre empresas e milhões de
+                                                                                                                                                                                                        usuários no país.</p>
+                            <p>Visite <a href="http://core.mesago.co">nosso site</a>!</p>
+                        </section></div><div class="middle"><section id="versão-em-inglês" class="resource-group"><h2 class="group-heading">Versão em Inglês <a href="#versão-em-inglês" class="permalink">&para;</a></h2><p>Para a versão em Inglês desse documento, por favor, visite <a href="http://docs.mesago.apiary.io">Mesago SMS API</a>!</p>
+                        </section></div><div class="middle"></div></div></div></div><script>/* eslint-env browser */
+            /* eslint quotes: [2, "single"] */
+            'use strict';
+
+            /*
+             Determine if a string ends with another string.
+             */
+            function endsWith(str, suffix) {
+                return str.indexOf(suffix, str.length - suffix.length) !== -1;
+            }
+
+            /*
+             Get a list of direct child elements by class name.
+             */
+            function childrenByClass(element, name) {
+                var filtered = [];
+
+                for (var i = 0; i < element.children.length; i++) {
+                    var child = element.children[i];
+                    var classNames = child.className.split(' ');
+                    if (classNames.indexOf(name) !== -1) {
+                        filtered.push(child);
+                    }
+                }
+
+                return filtered;
+            }
+
+            /*
+             Get an array [width, height] of the window.
+             */
+            function getWindowDimensions() {
+                var w = window,
+                    d = document,
+                    e = d.documentElement,
+                    g = d.body,
+                    x = w.innerWidth || e.clientWidth || g.clientWidth,
+                    y = w.innerHeight || e.clientHeight || g.clientHeight;
+
+                return [x, y];
+            }
+
+            /*
+             Collapse or show a request/response example.
+             */
+            function toggleCollapseButton(event) {
+                var button = event.target.parentNode;
+                var content = button.parentNode.nextSibling;
+                var inner = content.children[0];
+
+                if (button.className.indexOf('collapse-button') === -1) {
+                    // Clicked without hitting the right element?
+                    return;
+                }
+
+                if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+                    // Currently showing, so let's hide it
+                    button.className = 'collapse-button';
+                    content.style.maxHeight = '0px';
+                } else {
+                    // Currently hidden, so let's show it
+                    button.className = 'collapse-button show';
+                    content.style.maxHeight = inner.offsetHeight + 12 + 'px';
+                }
+            }
+
+            function toggleTabButton(event) {
+                var i, index;
+                var button = event.target;
+
+                // Get index of the current button.
+                var buttons = childrenByClass(button.parentNode, 'tab-button');
+                for (i = 0; i < buttons.length; i++) {
+                    if (buttons[i] === button) {
+                        index = i;
+                        button.className = 'tab-button active';
+                    } else {
+                        buttons[i].className = 'tab-button';
+                    }
+                }
+
+                // Hide other tabs and show this one.
+                var tabs = childrenByClass(button.parentNode.parentNode, 'tab');
+                for (i = 0; i < tabs.length; i++) {
+                    if (i === index) {
+                        tabs[i].style.display = 'block';
+                    } else {
+                        tabs[i].style.display = 'none';
+                    }
+                }
+            }
+
+            /*
+             Collapse or show a navigation menu. It will not be hidden unless it
+             is currently selected or `force` has been passed.
+             */
+            function toggleCollapseNav(event, force) {
+                var heading = event.target.parentNode;
+                var content = heading.nextSibling;
+                var inner = content.children[0];
+
+                if (heading.className.indexOf('heading') === -1) {
+                    // Clicked without hitting the right element?
+                    return;
+                }
+
+                if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+                    // Currently showing, so let's hide it, but only if this nav item
+                    // is already selected. This prevents newly selected items from
+                    // collapsing in an annoying fashion.
+                    if (force || window.location.hash && endsWith(event.target.href, window.location.hash)) {
+                        content.style.maxHeight = '0px';
+                    }
+                } else {
+                    // Currently hidden, so let's show it
+                    content.style.maxHeight = inner.offsetHeight + 12 + 'px';
+                }
+            }
+
+            /*
+             Refresh the page after a live update from the server. This only
+             works in live preview mode (using the `--server` parameter).
+             */
+            function refresh(body) {
+                document.querySelector('body').className = 'preload';
+                document.body.innerHTML = body;
+
+                // Re-initialize the page
+                init();
+                autoCollapse();
+
+                document.querySelector('body').className = '';
+            }
+
+            /*
+             Determine which navigation items should be auto-collapsed to show as many
+             as possible on the screen, based on the current window height. This also
+             collapses them.
+             */
+            function autoCollapse() {
+                var windowHeight = getWindowDimensions()[1];
+                var itemsHeight = 64; /* Account for some padding */
+                var itemsArray = Array.prototype.slice.call(
+                    document.querySelectorAll('nav .resource-group .heading'));
+
+                // Get the total height of the navigation items
+                itemsArray.forEach(function (item) {
+                    itemsHeight += item.parentNode.offsetHeight;
+                });
+
+                // Should we auto-collapse any nav items? Try to find the smallest item
+                // that can be collapsed to show all items on the screen. If not possible,
+                // then collapse the largest item and do it again. First, sort the items
+                // by height from smallest to largest.
+                var sortedItems = itemsArray.sort(function (a, b) {
+                    return a.parentNode.offsetHeight - b.parentNode.offsetHeight;
+                });
+
+                while (sortedItems.length && itemsHeight > windowHeight) {
+                    for (var i = 0; i < sortedItems.length; i++) {
+                        // Will collapsing this item help?
+                        var itemHeight = sortedItems[i].nextSibling.offsetHeight;
+                        if ((itemsHeight - itemHeight <= windowHeight) || i === sortedItems.length - 1) {
+                            // It will, so let's collapse it, remove its content height from
+                            // our total and then remove it from our list of candidates
+                            // that can be collapsed.
+                            itemsHeight -= itemHeight;
+                            toggleCollapseNav({target: sortedItems[i].children[0]}, true);
+                            sortedItems.splice(i, 1);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            /*
+             Initialize the interactive functionality of the page.
+             */
+            function init() {
+                var i, j;
+
+                // Make collapse buttons clickable
+                var buttons = document.querySelectorAll('.collapse-button');
+                for (i = 0; i < buttons.length; i++) {
+                    buttons[i].onclick = toggleCollapseButton;
+
+                    // Show by default? Then toggle now.
+                    if (buttons[i].className.indexOf('show') !== -1) {
+                        toggleCollapseButton({target: buttons[i].children[0]});
+                    }
+                }
+
+                var responseCodes = document.querySelectorAll('.example-names');
+                for (i = 0; i < responseCodes.length; i++) {
+                    var tabButtons = childrenByClass(responseCodes[i], 'tab-button');
+                    for (j = 0; j < tabButtons.length; j++) {
+                        tabButtons[j].onclick = toggleTabButton;
+
+                        // Show by default?
+                        if (j === 0) {
+                            toggleTabButton({target: tabButtons[j]});
+                        }
+                    }
+                }
+
+                // Make nav items clickable to collapse/expand their content.
+                var navItems = document.querySelectorAll('nav .resource-group .heading');
+                for (i = 0; i < navItems.length; i++) {
+                    navItems[i].onclick = toggleCollapseNav;
+
+                    // Show all by default
+                    toggleCollapseNav({target: navItems[i].children[0]});
+                }
+            }
+
+            // Initial call to set up buttons
+            init();
+
+            window.onload = function () {
+                autoCollapse();
+                // Remove the `preload` class to enable animations
+                document.querySelector('body').className = '';
+            };
+        </script>
+    </body>
+</html>
